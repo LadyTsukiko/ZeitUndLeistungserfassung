@@ -9,6 +9,6 @@ public class PasswordManager {
     }
 
     public String getHash(String pw){
-        return BCrypt.hashpw(tst, BCrypt.gensalt());
+        return BCrypt.hashpw(pw, BCrypt.gensalt());
     }
 }
