@@ -16,8 +16,24 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
 
         dbAccess dba = new dbAccess();
-        dba.createMitarbeiter("Sebastian", "Lange", "123");
- //       ResultSet res = dba.getMitarbeiter();
+        //   dba.createMitarbeiter("Sebastian", "Lange", "123");
+        ResultSet rs = dba.getMitarbeiter();
+        System.out.println("Got a Set back");
+
+
+        while(rs.next()){
+            System.out.println("RS is empty");
+            //Retrieve by column name
+            int id  = rs.getInt("mitarbeiter_id");
+
+            String first = rs.getString("name");
+            String last = rs.getString("vorname");
+
+            //Display values
+            System.out.print("ID: " + id);
+            System.out.print(", First: " + first);
+            System.out.println(", Last: " + last);
+        }
 
 
 
