@@ -1,5 +1,6 @@
 package gui;
 
+import database.PasswordManager;
 import database.dbAccess;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -7,7 +8,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.sql.ResultSet;
+import java.util.List;
 
 
 public class Main extends Application {
@@ -16,28 +17,22 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
 
         dbAccess dba = new dbAccess();
-        //   dba.createMitarbeiter("Sebastian", "Lange", "123");
-        ResultSet rs = dba.getMitarbeiter();
-        System.out.println("Got a Set back");
+        //dba.createMitarbeiter("Muster", "Hans", "123");
+        //dba.updateMitarbeiter(14, "Meier", "Fritz");
+        //  List rl = dba.getMitarbeiter();
 
+        //dba.createProjekt("125-A-20",2);
+        //dba.updateProjekt(2,"125-A-21",2);
+        //dba.createZeiterfassung(14,1,1,"20170528", "150000");
+        //List rl1 = dba.getZeiterfassungByMitarbeiter(12);
+        //List rl2 = dba.getTotalTimeByProjekt(1);
 
-        while(rs.next()){
-            System.out.println("RS is empty");
-            //Retrieve by column name
-            int id  = rs.getInt("mitarbeiter_id");
-
-            String first = rs.getString("name");
-            String last = rs.getString("vorname");
-
-            //Display values
-            System.out.print("ID: " + id);
-            System.out.print(", First: " + first);
-            System.out.println(", Last: " + last);
-        }
+        //System.out.println(new PasswordManager().checkCredentials(15,"123"));
 
 
 
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+
+    Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
@@ -46,6 +41,8 @@ public class Main extends Application {
 
 
     }
+
+
 
 
     public static void main(String[] args) {
