@@ -1,6 +1,7 @@
 package gui;
 
 import database.PasswordManager;
+import database.TableContents;
 import database.dbAccess;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -27,7 +28,7 @@ public class Main extends Application {
         //dba.createProjekt("125-A-20",2);
         //dba.updateProjekt(2,"125-A-21",2);
         //dba.createZeiterfassung(14,1,1,"20170528", "150000");
-        //List rl1 = dba.getZeiterfassungByMitarbeiter(12);
+       // TableContents rl1 = dba.getZeiterfassungByMitarbeiter(12);
         //List rl2 = dba.getTotalTimeByProjekt(1);
 
         //System.out.println(new PasswordManager().checkCredentials(15,"123"));
@@ -35,6 +36,9 @@ public class Main extends Application {
        // dba.getMitarbeiter();
 
 
+
+        //This setting is to prevent the app from freezing when a combobox is opened under windows 10 with a touchscreen
+        System.setProperty("glass.accessible.force", "false");
 
         Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
 

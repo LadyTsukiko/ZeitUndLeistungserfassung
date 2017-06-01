@@ -10,7 +10,7 @@ import java.util.ArrayList;
  */
 public class TableContents {
 
-    public ObservableList data;
+    public ObservableList<ObservableList> data;
     public ArrayList<String> meta = new ArrayList<String>();
     public int collumnCount = 0;
 }

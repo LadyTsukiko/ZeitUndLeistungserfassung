@@ -11,21 +11,34 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 public class Controller {
 
     dbAccess dba;
+    @FXML
     public TableView mainTable;
-    public CheckBox checky;
+    public ComboBox popupZeiterfassung_combobox;
+    public RadioButton popupZeiterfassung_mitarbeiter;
+    public RadioButton popupZeiterfassung_projekt;
+    public ToggleGroup popupZeiterfassung_toggleGroup;
+    public Button popupZeiterfassung_abbrechen;
+    public Button popupZeiterfassung_ok;
+
+    private int redo = 0;
+    private int id_for_zeiterfassung_redo = 0;
+    private boolean by_project;
+    //private TableContents tc;
+    private TableContents popuptc;
+
+
+
 
     public Controller(){
         dba = new dbAccess();
@@ -46,9 +59,112 @@ public class Controller {
     @FXML
     private void displayMitarbeiter(ActionEvent event) {
 
-       ObservableList data = FXCollections.observableArrayList();
-        TableContents tc = dba.getMitarbeiter();
-        ObservableList<String> row = FXCollections.observableArrayList();
+        fillTableView(dba.getMitarbeiter());
+        redo = 2;
+
+    }
+
+    @FXML
+    private void displayLeistungen(ActionEvent event) {
+
+        fillTableView(dba.getLeistungen());
+        redo = 3;
+    }
+
+    @FXML
+    private void displayKunden(ActionEvent event) {
+
+        fillTableView(dba.getKunden());
+        redo = 5;
+
+    }
+
+    @FXML
+    private void displayProjekte(ActionEvent event) {
+
+        fillTableView(dba.getProjekt());
+        redo = 4;
+
+    }
+    @FXML
+    private void displayZeiterfassungen(ActionEvent event) throws IOException {
+
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("popupZeiterfassung.fxml"));
+        Parent root = fxmlLoader.load();
+        Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setOpacity(1);
+        stage.setTitle("Wähle ID");
+        stage.setScene(new Scene(root, 400, 200));
+        stage.setResizable(false);
+        stage.show();
+
+    }
+
+    @FXML
+    private void handleRefresh(ActionEvent event) {
+        switch(redo) {
+            case 1:
+                fillTableView(dba.getZeiterfassungByMitarbeiter(12));
+                break;
+            case 2:
+                fillTableView(dba.getMitarbeiter());
+                break;
+            case 3:
+                fillTableView(dba.getLeistungen());
+                break;
+            case 4:
+                fillTableView(dba.getProjekt());
+                break;
+            case 5:
+                fillTableView(dba.getKunden());
+                break;
+        }
+    }
+
+
+
+    @FXML
+    private void handlePopupZeiterfassungOk(ActionEvent event) {
+        if(popupZeiterfassung_mitarbeiter.isSelected()){
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("sample.fxml"));
+            fillTableView(dba.getZeiterfassungByMitarbeiter(Integer.parseInt(popupZeiterfassung_combobox.getSelectionModel().getSelectedItem().toString())));
+
+        }
+
+
+    }
+    @FXML
+    private void handlePopupZeiterfassungAbbrechen(ActionEvent event) {
+
+        Stage stage = (Stage) popupZeiterfassung_abbrechen.getScene().getWindow();
+        stage.close();
+
+
+    }
+
+    @FXML
+    private void handlePopupZeiterfassungRadioButtons(ActionEvent event) {
+        popupZeiterfassung_combobox.getItems().clear();
+        if(popupZeiterfassung_mitarbeiter.isSelected()){
+            popuptc = dba.getMitarbeiter();
+            Iterator<ObservableList> iter = popuptc.data.iterator();
+            while(iter.hasNext())
+                popupZeiterfassung_combobox.getItems().add(iter.next().get(0));
+
+
+        }else if (popupZeiterfassung_projekt.isSelected()){
+            popuptc = dba.getProjekt();
+            Iterator<ObservableList> iter = popuptc.data.iterator();
+            while(iter.hasNext())
+                popupZeiterfassung_combobox.getItems().add(iter.next().get(0));
+        }
+
+
+    }
+
+    private void fillTableView(TableContents tc){
+
         mainTable.getColumns().clear();
         mainTable.getItems().clear();
 
@@ -69,6 +185,6 @@ public class Controller {
         }
 
         mainTable.setItems(tc.data);
-    }
 
+    }
 }

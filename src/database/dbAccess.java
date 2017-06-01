@@ -44,7 +44,7 @@ public class dbAccess {
 
 
     public TableContents getMitarbeiter() {
-        return getQuery2("SELECT mitarbeiter_id, name, vorname FROM mitarbeiter where inaktiv_flag = 0");
+        return getQuery("SELECT mitarbeiter_id, name, vorname FROM mitarbeiter where inaktiv_flag = 0");
     }
 
     public void createMitarbeiter(String name, String vorname, String passwort) {
@@ -61,7 +61,7 @@ public class dbAccess {
         updateQuery("UPDATE mitarbeiter SET inaktiv_flag = '1' WHERE mitarbeiter_id = '"+mitarbeiter_id+"'");
     }
 
-    public List getLeistungen() {
+    public TableContents getLeistungen() {
         return getQuery("SELECT leistungs_id, name, stundenansatz FROM leistung where inaktiv_flag = 0");
     }
 
@@ -78,8 +78,8 @@ public class dbAccess {
         updateQuery("UPDATE leistung SET inaktiv_flag = '1' WHERE leistungs_id = '"+leistungs_id+"'");
     }
 
-    public List getProjekt() {
-        return getQuery("SELECT kunden.name as kunde, projekt.name as projekt, projekt_id FROM kunden JOIN projekt using(kunden_id) where projekt.inaktiv_flag = 0");
+    public TableContents getProjekt() {
+        return getQuery("SELECT  projekt_id, kunden.name as kunde, projekt.name as projekt FROM kunden JOIN projekt using(kunden_id) where projekt.inaktiv_flag = 0");
     }
 
     public void createProjekt(String name, int kunden_id) {
@@ -95,7 +95,7 @@ public class dbAccess {
         updateQuery("UPDATE projekt SET inaktiv_flag = '1' WHERE projekt_id = '"+projekt_id+"'");
     }
 
-    public List getKunden() {
+    public TableContents getKunden() {
         return getQuery("SELECT kunden_id, name, strasse, plz, stadt FROM kunden where inaktiv_flag = 0");
     }
 
@@ -112,13 +112,13 @@ public class dbAccess {
         updateQuery("UPDATE kunden SET inaktiv_flag = '1' WHERE kunden_id = '"+kunden_id+"'");
     }
 
-    public List getZeiterfassungByMitarbeiter(int mitarbeiter_id) {
-        return getQuery("SELECT mitarbeiter.name as mitarbeiter, leistung.name as leistung, projekt.name as projekt, datum, dauer FROM zeiterfassung JOIN mitarbeiter using(mitarbeiter_id) JOIN leistung using(leistungs_id) JOIN projekt using(projekt_id) where mitarbeiter_id = '"+mitarbeiter_id+"'");
+    public TableContents getZeiterfassungByMitarbeiter(int mitarbeiter_id) {
+        return getQuery("SELECT erfassungs_id, mitarbeiter.name as mitarbeiter, leistung.name as leistung, projekt.name as projekt, datum, dauer FROM zeiterfassung JOIN mitarbeiter using(mitarbeiter_id) JOIN leistung using(leistungs_id) JOIN projekt using(projekt_id) where mitarbeiter_id = '"+mitarbeiter_id+"'");
 
     }
 
-    public List getZeiterfassungByProjekt(int projekt_id) {
-        return getQuery("SELECT mitarbeiter.name as mitarbeiter, leistung.name as leistung, projekt.name as projekt, datum, dauer FROM zeiterfassung JOIN mitarbeiter using(mitarbeiter_id) JOIN leistung using(leistungs_id) JOIN projekt using(projekt_id) where projekt_id = '"+projekt_id+"'");
+    public TableContents getZeiterfassungByProjekt(int projekt_id) {
+        return getQuery("SELECT erfassungs_id, mitarbeiter.name as mitarbeiter, leistung.name as leistung, projekt.name as projekt, datum, dauer FROM zeiterfassung JOIN mitarbeiter using(mitarbeiter_id) JOIN leistung using(leistungs_id) JOIN projekt using(projekt_id) where projekt_id = '"+projekt_id+"'");
 
     }
 
@@ -136,55 +136,19 @@ public class dbAccess {
     }
 
 
-    public List getTotalTimeByProjekt(int projekt_id) {
+    public TableContents getTotalTimeByProjekt(int projekt_id) {
         return getQuery("SELECT leistung.name as leistung, leistung.stundenansatz as stundenansatz, leistungs_id,  sum(TIME_TO_SEC(dauer))/3600 as gesamtdauer FROM zeiterfassung JOIN leistung USING(leistungs_id) WHERE projekt_id = '"+projekt_id+"' group by leistungs_id");
     }
 
     public String getPassHash(int mitarbeiter_id){
-        List<Map<String, Object>> rl = getQuery("SELECT passwort FROM mitarbeiter WHERE mitarbeiter_id = '"+mitarbeiter_id+"'");
-        if(rl.iterator().hasNext()) return (String)rl.iterator().next().get("passwort");
+
+        TableContents tc = getQuery("SELECT passwort FROM mitarbeiter WHERE mitarbeiter_id = '"+mitarbeiter_id+"'");
+        if(tc.collumnCount!=0) return (String)tc.data.get(0).iterator().next();
         else return "";
     }
 
 
-    private List getQuery(String query) {
 
-        try {
-                 conn = DriverManager.getConnection(connectionString);
-            //conn = DriverManager.getConnection(DB_URL, USER, PASS);
-
-            stmt = conn.createStatement();
-
-            rs = stmt.executeQuery(query);
-            ResultList = parseSetToList(rs);
-            tc = parseToTableContents(rs);
-            rs.close();
-            stmt.close();
-            conn.close();
-        } catch (SQLException se) {
-            System.out.println(se.getMessage());
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null)
-                    stmt.close();
-            } catch (SQLException se2) {
-            }// nothing we can do
-            try {
-                if (conn != null)
-                    conn.close();
-            } catch (SQLException se) {
-                System.out.println(se.getMessage());
-
-                se.printStackTrace();
-            }//end finally try
-
-        }
-        return ResultList;
-
-    }
 
     private void updateQuery(String query) {
 
@@ -225,11 +189,11 @@ public class dbAccess {
     private List parseSetToList(ResultSet rs) throws SQLException {
 
 
-    List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-    Map<String, Object> row = null;
+        List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+        Map<String, Object> row = null;
 
-    ResultSetMetaData metaData = rs.getMetaData();
-    Integer columnCount = metaData.getColumnCount();
+        ResultSetMetaData metaData = rs.getMetaData();
+        Integer columnCount = metaData.getColumnCount();
 
     while(rs.next())
 
@@ -254,7 +218,7 @@ public class dbAccess {
 
             //Get the column names
            for(int i=1; i<=collumnCount; i++){
-                meta.add(metaData.getColumnName(i));
+                meta.add(metaData.getColumnLabel(i));
                System.out.println(i);
            }
 
@@ -278,7 +242,7 @@ public class dbAccess {
        }
 
 
-    private TableContents getQuery2(String query) {
+    private TableContents getQuery(String query) {
 
         try {
             conn = DriverManager.getConnection(connectionString);
