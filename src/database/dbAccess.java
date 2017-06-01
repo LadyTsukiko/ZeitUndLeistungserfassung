@@ -1,5 +1,8 @@
 package database;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.*;
@@ -25,6 +28,7 @@ public class dbAccess {
     private Statement stmt;
     private ResultSet rs;
     private List ResultList;
+    private TableContents tc;
 
     public dbAccess() {
 
@@ -39,8 +43,8 @@ public class dbAccess {
     }
 
 
-    public List getMitarbeiter() {
-        return getQuery("SELECT mitarbeiter_id, name, vorname FROM mitarbeiter where inaktiv_flag = 0");
+    public TableContents getMitarbeiter() {
+        return getQuery2("SELECT mitarbeiter_id, name, vorname FROM mitarbeiter where inaktiv_flag = 0");
     }
 
     public void createMitarbeiter(String name, String vorname, String passwort) {
@@ -153,7 +157,7 @@ public class dbAccess {
 
             rs = stmt.executeQuery(query);
             ResultList = parseSetToList(rs);
-
+            tc = parseToTableContents(rs);
             rs.close();
             stmt.close();
             conn.close();
@@ -238,4 +242,78 @@ public class dbAccess {
     }
         return resultList;
 }
+
+       private TableContents parseToTableContents(ResultSet rs) throws SQLException {
+
+           int collumnCount = 0;
+           ObservableList data = FXCollections.observableArrayList();
+           ArrayList<String> meta = new ArrayList<String>();
+           TableContents tc = new TableContents();
+           ResultSetMetaData metaData = rs.getMetaData();
+           collumnCount = metaData.getColumnCount();
+
+            //Get the column names
+           for(int i=1; i<=collumnCount; i++){
+                meta.add(metaData.getColumnName(i));
+               System.out.println(i);
+           }
+
+           while(rs.next()){
+               //Iterate Row
+               ObservableList<String> row = FXCollections.observableArrayList();
+               for(int i=1 ; i<=collumnCount; i++){
+                   //Iterate Column
+                   row.add(rs.getString(i));
+               }
+               System.out.println("Row [1] added "+row );
+               data.add(row);
+               }
+
+           tc.collumnCount=collumnCount;
+           tc.data=data;
+           tc.meta=meta;
+
+           return tc;
+
+       }
+
+
+    private TableContents getQuery2(String query) {
+
+        try {
+            conn = DriverManager.getConnection(connectionString);
+            //conn = DriverManager.getConnection(DB_URL, USER, PASS);
+
+            stmt = conn.createStatement();
+
+            rs = stmt.executeQuery(query);
+
+            tc = parseToTableContents(rs);
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (SQLException se) {
+            System.out.println(se.getMessage());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        } finally {
+            //finally block used to close resources
+            try {
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException se2) {
+            }// nothing we can do
+            try {
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException se) {
+                System.out.println(se.getMessage());
+
+                se.printStackTrace();
+            }//end finally try
+
+        }
+        return tc;
+
+    }
 }

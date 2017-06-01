@@ -6,6 +6,9 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.util.List;
@@ -29,12 +32,16 @@ public class Main extends Application {
 
         //System.out.println(new PasswordManager().checkCredentials(15,"123"));
 
+       // dba.getMitarbeiter();
 
 
 
-    Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+
+
+
+        primaryStage.setTitle("Zeit und Leistungserfassung");
+        primaryStage.setScene(new Scene(root, 1200, 900));
         primaryStage.show();
 
 
