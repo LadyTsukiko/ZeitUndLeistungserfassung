@@ -4,26 +4,20 @@ import data.RefreshData;
 import database.TableContents;
 import database.dbAccess;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import java.awt.*;
 import java.io.IOException;
-import java.util.Iterator;
 
 public class Controller {
 
@@ -31,14 +25,11 @@ public class Controller {
     @FXML private ComboBox popupZeiterfassung_combobox;
     @FXML private RadioButton popupZeiterfassung_mitarbeiter;
     @FXML private RadioButton popupZeiterfassung_projekt;
-    @FXML private ToggleGroup popupZeiterfassung_toggleGroup;
     @FXML private Button popupZeiterfassung_abbrechen;
     @FXML private Button popupZeiterfassung_ok;
 
-    public RefreshData redo = new RefreshData();
-    public TableContents tc = new TableContents();
-    private TableContents popuptc;
-    private static boolean logged_in = false;
+    private RefreshData redo = new RefreshData();
+    private TableContents tc = new TableContents();
     private     dbAccess dba;
 
 
@@ -89,7 +80,7 @@ public class Controller {
     }
 
     @FXML
-    private void handleCreateNew(ActionEvent event) throws IOException {
+    private void handleCreateNew() throws IOException {
 
         if(redo.getRedo()!=0) {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("popupnewEntry.fxml"));
@@ -106,7 +97,7 @@ public class Controller {
     }
 
     @FXML
-    private void displayMitarbeiter(ActionEvent event) {
+    private void displayMitarbeiter() {
 
         fillTableView(dba.getMitarbeiter());
         redo.setRedo(2);
@@ -114,14 +105,14 @@ public class Controller {
     }
 
     @FXML
-    private void displayLeistungen(ActionEvent event) {
+    private void displayLeistungen() {
 
         fillTableView(dba.getLeistungen());
         redo.setRedo(3);
     }
 
     @FXML
-    private void displayKunden(ActionEvent event) {
+    private void displayKunden() {
 
         fillTableView(dba.getKunden());
         redo.setRedo(5);
@@ -129,14 +120,14 @@ public class Controller {
     }
 
     @FXML
-    private void displayProjekte(ActionEvent event) {
+    private void displayProjekte() {
 
         fillTableView(dba.getProjekt());
         redo.setRedo(4);
 
     }
     @FXML
-    private void displayZeiterfassungen(ActionEvent event) throws IOException {
+    private void displayZeiterfassungen() throws IOException {
 
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("popupZeiterfassung.fxml"));
 
@@ -154,14 +145,14 @@ public class Controller {
     }
 
     @FXML
-    private void handleRefresh(ActionEvent event) {
+    private void handleRefresh() {
         refresh();
     }
 
 
 
     @FXML
-    private void handlePopupZeiterfassungOk(ActionEvent event) {
+    private void handlePopupZeiterfassungOk() {
         if(popupZeiterfassung_mitarbeiter.isSelected()){
             int id = Integer.parseInt(popupZeiterfassung_combobox.getSelectionModel().getSelectedItem().toString());
             fillTableView(dba.getZeiterfassungByMitarbeiter(id));
@@ -183,33 +174,30 @@ public class Controller {
         }
 
     }
-    public void passTableView(TableView tv, RefreshData redo){
+    private void passTableView(TableView tv, RefreshData redo){
         mainTable = tv;
         this.redo = redo;
     }
 
     @FXML
-    private void handlePopupZeiterfassungAbbrechen(ActionEvent event) {
+    private void handlePopupZeiterfassungAbbrechen() {
         Stage stage = (Stage) popupZeiterfassung_abbrechen.getScene().getWindow();
         stage.close();
 
     }
 
     @FXML
-    private void handlePopupZeiterfassungRadioButtons(ActionEvent event) {
+    private void handlePopupZeiterfassungRadioButtons() {
         popupZeiterfassung_combobox.getItems().clear();
+        TableContents popuptc;
         if(popupZeiterfassung_mitarbeiter.isSelected()){
             popuptc = dba.getMitarbeiter();
-            Iterator<ObservableList> iter = popuptc.data.iterator();
-            while(iter.hasNext())
-                popupZeiterfassung_combobox.getItems().add(iter.next().get(0));
+            for (ObservableList aData : popuptc.data) popupZeiterfassung_combobox.getItems().add(aData.get(0));
 
 
         }else if (popupZeiterfassung_projekt.isSelected()){
             popuptc = dba.getProjekt();
-            Iterator<ObservableList> iter = popuptc.data.iterator();
-            while(iter.hasNext())
-                popupZeiterfassung_combobox.getItems().add(iter.next().get(0));
+            for (ObservableList aData : popuptc.data) popupZeiterfassung_combobox.getItems().add(aData.get(0));
         }
 
 
@@ -246,8 +234,6 @@ public class Controller {
 
             ObservableList row = (ObservableList) mainTable.getSelectionModel().getSelectedItem();
             if (row != null) {
-                System.out.println(row);
-
                 FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("popupEditEntry.fxml"));
                 Parent root = fxmlLoader.load();
                 Stage stage = new Stage();

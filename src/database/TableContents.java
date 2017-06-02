@@ -1,6 +1,5 @@
 package database;
 
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
@@ -11,6 +10,6 @@ import java.util.ArrayList;
 public class TableContents {
 
     public ObservableList<ObservableList> data;
-    public ArrayList<String> meta = new ArrayList<String>();
+    public ArrayList<String> meta = new ArrayList<>();
     public int collumnCount = 0;
 }

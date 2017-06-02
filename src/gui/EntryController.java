@@ -3,48 +3,33 @@ package gui;
 import data.RefreshData;
 import database.TableContents;
 import database.dbAccess;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.Callback;
-
-import java.io.IOException;
-import java.util.Iterator;
 
 public class EntryController {
 
-    dbAccess dba;
-    @FXML
-
-    public Label popupNewEntry_toplabel;
-    public Button popupNewEntry_abbrechen;
-    public GridPane popupNewEntry_mitarbeiter;
-    public GridPane popupNewEntry_leistung;
-    public GridPane popupNewEntry_zeiterfassung;
-    public GridPane popupNewEntry_projekt;
-    public GridPane popupNewEntry_kunde;
-    public ComboBox popupNewEntry_combo_mitarbeiter;
-    public ComboBox popupNewEntry_combo_projekt;
-    public ComboBox popupNewEntry_combo_leistung;
-    public ComboBox popupNewEntry_combo_kunde;
-    public DatePicker popupNewEntry_datum;
-    public TextField popupNewEntry_dauer;
 
 
+    @FXML private Label popupNewEntry_toplabel;
+    @FXML private Button popupNewEntry_abbrechen;
+    @FXML private GridPane popupNewEntry_mitarbeiter;
+    @FXML private GridPane popupNewEntry_leistung;
+    @FXML private GridPane popupNewEntry_zeiterfassung;
+    @FXML private GridPane popupNewEntry_projekt;
+    @FXML private GridPane popupNewEntry_kunde;
+    @FXML private ComboBox popupNewEntry_combo_mitarbeiter;
+    @FXML private ComboBox popupNewEntry_combo_projekt;
+    @FXML private ComboBox popupNewEntry_combo_leistung;
+    @FXML private ComboBox popupNewEntry_combo_kunde;
+    @FXML private DatePicker popupNewEntry_datum;
+    @FXML private TextField popupNewEntry_dauer;
 
-    public RefreshData redo = new RefreshData();
+
+    private dbAccess dba;
+    private RefreshData redo = new RefreshData();
     private TableContents tc;
     private TableContents popuptc;
 
@@ -87,11 +72,6 @@ public class EntryController {
         popupNewEntry_kunde.setVisible(false);
         popupNewEntry_kunde.setManaged(false);
 
-      /*  for(int i=1; i< this.tc.collumnCount; i++) {
-            HBox hb = new HBox(new Label(this.tc.meta.get(i)), new TextField());
-            hb.setAlignment(Pos.CENTER);
-            popupNewEntry_fieldcontainer.getChildren().add(hb);
-        }*/
         switch(redo.getRedo()){
             case 1:
                 popupNewEntry_zeiterfassung.setVisible(true);
@@ -125,7 +105,7 @@ public class EntryController {
 
 
     @FXML
-    private void handlePopupNewEntryOk(ActionEvent event) {
+    private void handlePopupNewEntryOk() {
         switch(redo.getRedo()) {
             case 1:
                 dba.createZeiterfassung(
@@ -186,7 +166,7 @@ public class EntryController {
 
 
     @FXML
-    private void handlePopupNewEntryAbbrechen(ActionEvent event) {
+    private void handlePopupNewEntryAbbrechen() {
         Stage stage = (Stage) popupNewEntry_abbrechen.getScene().getWindow();
         stage.close();
 

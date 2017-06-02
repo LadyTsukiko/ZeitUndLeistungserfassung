@@ -8,7 +8,7 @@ public class PasswordManager {
 
     }
 
-    public String getHash(String pw) {
+    String getHash(String pw) {
         return BCrypt.hashpw(pw, BCrypt.gensalt());
     }
 

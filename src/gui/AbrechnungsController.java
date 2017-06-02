@@ -4,6 +4,7 @@ import database.TableContents;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -18,7 +19,7 @@ public class AbrechnungsController {
         popupAbrechnung_textarea.appendText("Leistung | Stundenansatz | LeistungsID | Geleistete Zeit | Total Kosten \n");
         int size  = tc.data.size();
         int i = 0;
-        ArrayList<Float> result = new ArrayList<Float>();
+        ArrayList<Float> result = new ArrayList<>();
         Float total = 0.0f;
         while (i<size){
             result.add(Float.parseFloat((String)tc.data.get(i).get(1))*Float.parseFloat((String)tc.data.get(i).get(3)));
@@ -27,7 +28,8 @@ public class AbrechnungsController {
 
             i++;
         }
-        popupAbrechnung_textarea.appendText("   Total Costs:      "+total );
+        DecimalFormat df = new DecimalFormat("#.##");
+        popupAbrechnung_textarea.appendText("   Total Costs:     "+df.format(total));
 
     }
 

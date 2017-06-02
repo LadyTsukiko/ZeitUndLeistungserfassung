@@ -4,7 +4,6 @@ import data.RefreshData;
 import database.TableContents;
 import database.dbAccess;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,12 +12,13 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.util.converter.LocalDateStringConverter;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
+
+import static java.time.LocalDate.parse;
 
 public class EditEntryController {
 
@@ -42,7 +42,6 @@ public class EditEntryController {
 
 
     private RefreshData redo = new RefreshData();
-    private TableContents tc;
     private TableContents popuptc;
     private ObservableList row;
     private dbAccess dba;
@@ -57,7 +56,6 @@ public class EditEntryController {
         dba = new dbAccess();
 
         this.redo = redo;
-       //this.tc = tc;
         this.row = row;
 
         popuptc = dba.getMitarbeiter();
@@ -155,19 +153,14 @@ public class EditEntryController {
                 kplz.setText((String)iter.next());
                 kstadt.setText((String)iter.next());
 
-
                 break;
-
-
         }
-
     }
 
 
 
     @FXML
-    private void handlePopupNewEntryUpdate(ActionEvent event) {
-
+    private void handlePopupNewEntryUpdate() {
 
         switch(redo.getRedo()) {
             case 1:
@@ -230,7 +223,7 @@ public class EditEntryController {
 
     }
     @FXML
-    private void handlePopupNewEntryDelete(ActionEvent event) {
+    private void handlePopupNewEntryDelete() {
         switch(redo.getRedo()){
             case 1:
                 dba.deleteZeiterfassung(Integer.parseInt(popupEditEntry_idtext.getText()));
@@ -254,7 +247,7 @@ public class EditEntryController {
 
 
         @FXML
-    private void handlePopupNewEntryAbbrechen(ActionEvent event) {
+    private void handlePopupNewEntryAbbrechen() {
         Stage stage = (Stage) popupNewEntry_abbrechen.getScene().getWindow();
         stage.close();
 
@@ -262,7 +255,7 @@ public class EditEntryController {
 
 
     @FXML
-    private void handlePopupNewEntryAbschliessen(ActionEvent event) throws IOException {
+    private void handlePopupNewEntryAbschliessen() throws IOException {
         popuptc = dba.getTotalTimeByProjekt(Integer.parseInt(popupEditEntry_idtext.getText()));
         TextField pname     =   (TextField)popupNewEntry_projekt.getChildren().get(2);
 
@@ -283,19 +276,17 @@ public class EditEntryController {
     }
     private void autoSelectId(String id, ComboBox cb) {
 
-        Iterator iter = cb.getItems().iterator();
-       while(iter.hasNext()) {
-           String str = (String)iter.next();
-            if(str.equals(id)) {
+        for (Object o : cb.getItems()) {
+            String str = (String) o;
+            if (str.equals(id)) {
                 cb.getSelectionModel().select(str);
                 break;
             }
         }
     }
-    public static final LocalDate LOCAL_DATE (String dateString){
+    private static LocalDate LOCAL_DATE(String dateString){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate localDate = LocalDate.parse(dateString, formatter);
-        return localDate;
+        return parse(dateString, formatter);
     }
 
 

@@ -1,8 +1,6 @@
 package gui;
 
-import com.intellij.codeHighlighting.Pass;
 import database.PasswordManager;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -12,7 +10,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -27,11 +24,12 @@ public class LoginController {
     @FXML private PasswordField popupLogin_pw;
     @FXML private Label popupLogin_credLabel;
 
-    //Skips Login
-    private boolean debug = true;
+    //Skips Login if true, login requires level 1, login with ID: 16, pw: admin
+    private final static boolean debug = false;
+
 
     @FXML
-    private void popupLogin_login(ActionEvent event) throws IOException {
+    private void popupLogin_login() throws IOException {
         doLogin();
 
     }
@@ -43,7 +41,7 @@ public class LoginController {
         }
     }
    @FXML
-   private void popupLogin_abbrechen(ActionEvent event) {
+   private void popupLogin_abbrechen() {
        Stage stage2 = (Stage) popupLogin_id.getScene().getWindow();
        stage2.close();
 

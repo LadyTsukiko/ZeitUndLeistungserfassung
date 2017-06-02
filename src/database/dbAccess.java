@@ -6,32 +6,27 @@ import javafx.collections.ObservableList;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class dbAccess {
 
     // JDBC driver name and database URL
-    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://147.87.116.243:3306/leistungdb";
+   // static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+    private static final String DB_URL = "jdbc:mysql://147.87.116.243:3306/leistungdb";
 
     //  Database credentials
-    static final String USER = "leistunguser";
-    static final String PASS = "leipass223";
+    private static final String USER = "leistunguser";
+    private static final String PASS = "leipass223";
     private static final String connectionString = "" + DB_URL + "?user=" + USER + "&password=" + PASS + "&verifyServerCertificate=false&useSSL=true&useUnicode=true&characterEncoding=UTF-8";
 
 
     private Connection conn;
     private Statement stmt;
-    private ResultSet rs;
-    private List ResultList;
     private TableContents tc;
 
     public dbAccess() {
 
 
-        Connection conn = null;
-        Statement stmt = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
         } catch (Exception e) {
@@ -147,9 +142,9 @@ public class dbAccess {
         return getQuery("SELECT leistung.name as leistung, leistung.stundenansatz as stundenansatz, leistungs_id,  sum(TIME_TO_SEC(dauer))/3600 as gesamtdauer FROM zeiterfassung JOIN leistung USING(leistungs_id) WHERE projekt_id = '"+projekt_id+"' group by leistungs_id");
     }
 
-    public String getPassHash(int mitarbeiter_id){
+    String getPassHash(int mitarbeiter_id){
 
-        TableContents tc = getQuery("SELECT passwort FROM mitarbeiter WHERE mitarbeiter_id = '"+mitarbeiter_id+"'");
+        TableContents tc = getQuery("SELECT passwort FROM mitarbeiter WHERE level = '1' AND mitarbeiter_id = '"+mitarbeiter_id+"'");
         if(tc.collumnCount!=0) return (String)tc.data.get(0).iterator().next();
         else return "";
     }
@@ -235,7 +230,7 @@ public class dbAccess {
 
             stmt = conn.createStatement();
 
-            rs = stmt.executeQuery(query);
+            ResultSet rs = stmt.executeQuery(query);
 
             tc = parseToTableContents(rs);
             rs.close();
