@@ -27,20 +27,19 @@ import java.util.Iterator;
 
 public class Controller {
 
-    dbAccess dba;
-    @FXML
-    public TableView mainTable;
-    public ComboBox popupZeiterfassung_combobox;
-    public RadioButton popupZeiterfassung_mitarbeiter;
-    public RadioButton popupZeiterfassung_projekt;
-    public ToggleGroup popupZeiterfassung_toggleGroup;
-    public Button popupZeiterfassung_abbrechen;
-    public Button popupZeiterfassung_ok;
+    @FXML private TableView mainTable;
+    @FXML private ComboBox popupZeiterfassung_combobox;
+    @FXML private RadioButton popupZeiterfassung_mitarbeiter;
+    @FXML private RadioButton popupZeiterfassung_projekt;
+    @FXML private ToggleGroup popupZeiterfassung_toggleGroup;
+    @FXML private Button popupZeiterfassung_abbrechen;
+    @FXML private Button popupZeiterfassung_ok;
 
     public RefreshData redo = new RefreshData();
-    private TableContents tc = new TableContents();
+    public TableContents tc = new TableContents();
     private TableContents popuptc;
     private static boolean logged_in = false;
+    private     dbAccess dba;
 
 
 
@@ -102,6 +101,7 @@ public class Controller {
             stage.setScene(new Scene(root, 500, 400));
             fxmlLoader.<EntryController>getController().initialize(tc,redo);
             stage.showAndWait();
+            refresh();
         }
     }
 
@@ -155,24 +155,7 @@ public class Controller {
 
     @FXML
     private void handleRefresh(ActionEvent event) {
-        switch(redo.getRedo()) {
-            case 1:
-                if(redo.isBy_project()) fillTableView(dba.getZeiterfassungByProjekt(redo.getId_for_zeiterfassung_redo()));
-                else if(!redo.isBy_project()) fillTableView(dba.getZeiterfassungByMitarbeiter(redo.getId_for_zeiterfassung_redo()));
-                break;
-            case 2:
-                fillTableView(dba.getMitarbeiter());
-                break;
-            case 3:
-                fillTableView(dba.getLeistungen());
-                break;
-            case 4:
-                fillTableView(dba.getProjekt());
-                break;
-            case 5:
-                fillTableView(dba.getKunden());
-                break;
-        }
+        refresh();
     }
 
 
@@ -238,7 +221,7 @@ public class Controller {
         mainTable.getItems().clear();
 
         for(int i=0 ; i<tc.collumnCount; i++){
-            //We are using non property style for making dynamic table
+            //Creates a dynamic table based on query
             final int j = i;
             TableColumn col = new TableColumn(tc.meta.get(i));
             col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
@@ -250,19 +233,57 @@ public class Controller {
             mainTable.getColumns().addAll(col);
 
         }
-        this.tc=tc;
-        mainTable.setItems(tc.data);
 
+        mainTable.setItems(tc.data);
+        this.tc=tc;
 
     }
 
 
     @FXML
-    private void handleClickedRow(MouseEvent me){
+    private void handleClickedRow(MouseEvent me) throws IOException {
         if(me.getClickCount() == 2) {
-            ObservableList test = (ObservableList) mainTable.getSelectionModel().getSelectedItem();
-            System.out.println(test);
-            System.out.println("clicked on a row");
+
+            ObservableList row = (ObservableList) mainTable.getSelectionModel().getSelectedItem();
+            if (row != null) {
+                System.out.println(row);
+
+                FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("popupEditEntry.fxml"));
+                Parent root = fxmlLoader.load();
+                Stage stage = new Stage();
+                stage.initModality(Modality.APPLICATION_MODAL);
+                stage.setOpacity(1);
+                stage.setTitle("Eintrag Bearbeiten");
+                stage.setScene(new Scene(root, 500, 400));
+                fxmlLoader.<EditEntryController>getController().initialize(row, redo);
+                stage.showAndWait();
+                refresh();
+
+
+            }
+
+        }
+    }
+    private void refresh() {
+        switch (redo.getRedo()) {
+            case 1:
+                if (redo.isBy_project())
+                    fillTableView(dba.getZeiterfassungByProjekt(redo.getId_for_zeiterfassung_redo()));
+                else if (!redo.isBy_project())
+                    fillTableView(dba.getZeiterfassungByMitarbeiter(redo.getId_for_zeiterfassung_redo()));
+                break;
+            case 2:
+                fillTableView(dba.getMitarbeiter());
+                break;
+            case 3:
+                fillTableView(dba.getLeistungen());
+                break;
+            case 4:
+                fillTableView(dba.getProjekt());
+                break;
+            case 5:
+                fillTableView(dba.getKunden());
+                break;
         }
     }
 }

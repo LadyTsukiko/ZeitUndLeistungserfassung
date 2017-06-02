@@ -3,14 +3,10 @@ package database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class dbAccess {
@@ -83,6 +79,11 @@ public class dbAccess {
         return getQuery("SELECT  projekt_id, kunden.name as kunde, projekt.name as projekt FROM kunden JOIN projekt using(kunden_id) where projekt.inaktiv_flag = 0");
     }
 
+    public TableContents getProjektById(int projekt_id) {
+        return getQuery("SELECT kunden_id FROM projekt  where projekt_id = '"+projekt_id+"'");
+
+    }
+
     public void createProjekt(String name, int kunden_id) {
         updateQuery("INSERT INTO projekt (name, kunden_id) VALUES('" + name + "','" + kunden_id + "');");
 
@@ -123,12 +124,17 @@ public class dbAccess {
 
     }
 
+    public TableContents getZeiterfassungById(int erfassungs_id) {
+        return getQuery("SELECT * FROM zeiterfassung  where erfassungs_id = '"+erfassungs_id+"'");
+
+    }
+
     public void createZeiterfassung(int mitarbeiter_id, int leistungs_id, int projekt_id, LocalDate datum, String dauer) {
         updateQuery("INSERT INTO zeiterfassung (mitarbeiter_id, leistungs_id, projekt_id, datum, dauer) VALUES('" + mitarbeiter_id + "','" + leistungs_id + "','" + projekt_id + "','" + datum + "','" + dauer + "');");
 
     }
-    public void updateZeiterfassung(int erfassungs_id, int mitarbeiter_id, int leistungs_id, int projekt_id, String datum, String dauer){
-        updateQuery("UPDATE mitarbeiter SET mitarbeiter_id = '"+mitarbeiter_id+"', leistungs_id = '"+leistungs_id+"', projekt_id = '"+projekt_id+"', datum = '"+datum+"', dauer = '"+dauer+"',  WHERE erfassungs_id = '"+erfassungs_id+"'");
+    public void updateZeiterfassung(int erfassungs_id, int mitarbeiter_id, int leistungs_id, int projekt_id, LocalDate datum, String dauer){
+        updateQuery("UPDATE zeiterfassung SET mitarbeiter_id = '"+mitarbeiter_id+"', leistungs_id = '"+leistungs_id+"', projekt_id = '"+projekt_id+"', datum = '"+datum+"', dauer = '"+dauer+"'  WHERE erfassungs_id = '"+erfassungs_id+"'");
 
     }
 
@@ -187,26 +193,6 @@ public class dbAccess {
         }
     }
 
-    private List parseSetToList(ResultSet rs) throws SQLException {
-
-
-        List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
-        Map<String, Object> row = null;
-
-        ResultSetMetaData metaData = rs.getMetaData();
-        Integer columnCount = metaData.getColumnCount();
-
-    while(rs.next())
-
-    {
-        row = new HashMap<String, Object>();
-        for (int i = 1; i <= columnCount; i++) {
-            row.put(metaData.getColumnLabel(i), rs.getObject(i));
-        }
-        resultList.add(row);
-    }
-        return resultList;
-}
 
        private TableContents parseToTableContents(ResultSet rs) throws SQLException {
 
@@ -220,7 +206,6 @@ public class dbAccess {
             //Get the column names
            for(int i=1; i<=collumnCount; i++){
                 meta.add(metaData.getColumnLabel(i));
-               System.out.println(i);
            }
 
            while(rs.next()){
@@ -230,7 +215,6 @@ public class dbAccess {
                    //Iterate Column
                    row.add(rs.getString(i));
                }
-               System.out.println("Row [1] added "+row );
                data.add(row);
                }
 
