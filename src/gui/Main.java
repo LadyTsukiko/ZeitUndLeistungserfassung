@@ -4,6 +4,7 @@ import database.PasswordManager;
 import database.TableContents;
 import database.dbAccess;
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,7 +12,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
+import java.io.IOException;
 import java.util.List;
 
 
@@ -40,12 +43,10 @@ public class Main extends Application {
         //This setting is to prevent the app from freezing when a combobox is opened under windows 10 with a touchscreen
         System.setProperty("glass.accessible.force", "false");
 
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("popupLogin.fxml"));
 
-
-
-        primaryStage.setTitle("Zeit und Leistungserfassung");
-        primaryStage.setScene(new Scene(root, 1200, 900));
+        primaryStage.setTitle("Login");
+        primaryStage.setScene(new Scene(root, 500, 400));
         primaryStage.show();
 
 

@@ -4,7 +4,9 @@ import data.RefreshData;
 import database.TableContents;
 import database.dbAccess;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,10 +14,14 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.Iterator;
 
@@ -32,26 +38,71 @@ public class Controller {
     public Button popupZeiterfassung_ok;
 
     public RefreshData redo = new RefreshData();
-    //private TableContents tc;
+    private TableContents tc = new TableContents();
     private TableContents popuptc;
+    private static boolean logged_in = false;
 
 
 
 
     public Controller(){
         dba = new dbAccess();
+
+        mainTable = new TableView();
+        mainTable.setRowFactory(tv -> {
+            TableRow<ObservableList> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (! row.isEmpty() && event.getButton()== MouseButton.PRIMARY ){
+
+                    ObservableList clickedRow = row.getItem();
+                    System.out.println(clickedRow);
+                  //  handleClickedRow(clickedRow);
+                }
+            });
+            return row ;
+        });
+
+
+
+
+
+  /*      mainTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
+                System.out.println("Selected Value");
+
+                //Check whether item is selected and set value of selected item to Label
+                if(mainTable.getSelectionModel().getSelectedItem() != null)
+                {
+                    TableView.TableViewSelectionModel selectionModel = mainTable.getSelectionModel();
+                    ObservableList selectedCells = selectionModel.getSelectedCells();
+                    TablePosition tablePosition = (TablePosition) selectedCells.get(0);
+                    Object val = tablePosition.getTableColumn().getCellData(newValue);
+                    System.out.println("Selected Value" + val);
+                }
+            }
+        });
+
+
+ */
+
+
     }
 
     @FXML
     private void handleCreateNew(ActionEvent event) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("newEntry.fxml"));
-        Parent root = fxmlLoader.load();
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setOpacity(1);
-        stage.setTitle("My New Stage Title");
-        stage.setScene(new Scene(root, 450, 450));
-        stage.showAndWait();
+
+        if(redo.getRedo()!=0) {
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("popupnewEntry.fxml"));
+            Parent root = fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.setOpacity(1);
+            stage.setTitle("Neuen Eintrag erstellen");
+            stage.setScene(new Scene(root, 500, 400));
+            fxmlLoader.<EntryController>getController().initialize(tc,redo);
+            stage.showAndWait();
+        }
     }
 
     @FXML
@@ -106,7 +157,8 @@ public class Controller {
     private void handleRefresh(ActionEvent event) {
         switch(redo.getRedo()) {
             case 1:
-                fillTableView(dba.getZeiterfassungByMitarbeiter(12));
+                if(redo.isBy_project()) fillTableView(dba.getZeiterfassungByProjekt(redo.getId_for_zeiterfassung_redo()));
+                else if(!redo.isBy_project()) fillTableView(dba.getZeiterfassungByMitarbeiter(redo.getId_for_zeiterfassung_redo()));
                 break;
             case 2:
                 fillTableView(dba.getMitarbeiter());
@@ -141,7 +193,7 @@ public class Controller {
             int id = Integer.parseInt(popupZeiterfassung_combobox.getSelectionModel().getSelectedItem().toString());
             fillTableView(dba.getZeiterfassungByProjekt(id));
             redo.setRedo(1);
-            redo.setBy_project(false);
+            redo.setBy_project(true);
             redo.setId_for_zeiterfassung_redo(id);
             Stage stage = (Stage) popupZeiterfassung_ok.getScene().getWindow();
             stage.close();
@@ -155,10 +207,8 @@ public class Controller {
 
     @FXML
     private void handlePopupZeiterfassungAbbrechen(ActionEvent event) {
-
         Stage stage = (Stage) popupZeiterfassung_abbrechen.getScene().getWindow();
         stage.close();
-
 
     }
 
@@ -191,7 +241,6 @@ public class Controller {
             //We are using non property style for making dynamic table
             final int j = i;
             TableColumn col = new TableColumn(tc.meta.get(i));
-            System.out.println(tc.meta.get(i));
             col.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList,String>,ObservableValue<String>>(){
                 public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
                     return new SimpleStringProperty(param.getValue().get(j).toString());
@@ -200,10 +249,20 @@ public class Controller {
 
             mainTable.getColumns().addAll(col);
 
-            System.out.println("Column ["+i+"] ");
         }
-
+        this.tc=tc;
         mainTable.setItems(tc.data);
 
+
+    }
+
+
+    @FXML
+    private void handleClickedRow(MouseEvent me){
+        if(me.getClickCount() == 2) {
+            ObservableList test = (ObservableList) mainTable.getSelectionModel().getSelectedItem();
+            System.out.println(test);
+            System.out.println("clicked on a row");
+        }
     }
 }

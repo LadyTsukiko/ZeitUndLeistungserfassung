@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -99,11 +100,11 @@ public class dbAccess {
         return getQuery("SELECT kunden_id, name, strasse, plz, stadt FROM kunden where inaktiv_flag = 0");
     }
 
-    public void createKunde(String name, String strasse, int plz, String stadt) {
+    public void createKunde(String name, String strasse, String plz, String stadt) {
         updateQuery("INSERT INTO kunden (name, strasse, plz, stadt) VALUES('" + name + "','" + strasse + "','" + plz + "','" + stadt + "');");
 
     }
-    public void updateKunde(int kunden_id, String name, String strasse, int plz, String stadt){
+    public void updateKunde(int kunden_id, String name, String strasse, String plz, String stadt){
         updateQuery("UPDATE kunden SET name = '"+name+"', strasse = '"+strasse+"', plz = '"+plz+"', stadt = '"+stadt+"' WHERE kunden_id = '"+kunden_id+"'");
 
     }
@@ -122,7 +123,7 @@ public class dbAccess {
 
     }
 
-    public void createZeiterfassung(int mitarbeiter_id, int leistungs_id, int projekt_id, String datum, String dauer) {
+    public void createZeiterfassung(int mitarbeiter_id, int leistungs_id, int projekt_id, LocalDate datum, String dauer) {
         updateQuery("INSERT INTO zeiterfassung (mitarbeiter_id, leistungs_id, projekt_id, datum, dauer) VALUES('" + mitarbeiter_id + "','" + leistungs_id + "','" + projekt_id + "','" + datum + "','" + dauer + "');");
 
     }
