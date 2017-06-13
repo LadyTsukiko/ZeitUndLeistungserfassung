@@ -96,6 +96,10 @@ public class dbAccess {
         return getQuery("SELECT kunden_id, name, strasse, plz, stadt FROM kunden where inaktiv_flag = 0");
     }
 
+    public TableContents getAddresseByProjektID(String projekt_id){
+        return getQuery("SELECT kunden.name, kunden.strasse, kunden.plz, kunden.stadt FROM kunden join projekt using(kunden_id) where projekt_id = '"+projekt_id+"'");
+    }
+
     public void createKunde(String name, String strasse, String plz, String stadt) {
         updateQuery("INSERT INTO kunden (name, strasse, plz, stadt) VALUES('" + name + "','" + strasse + "','" + plz + "','" + stadt + "');");
 
