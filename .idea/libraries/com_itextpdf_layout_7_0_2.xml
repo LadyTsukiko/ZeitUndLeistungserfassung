@@ -6,6 +6,10 @@
       <root url="jar://$MAVEN_REPOSITORY$/com/itextpdf/kernel/7.0.2/kernel-7.0.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/com/itextpdf/io/7.0.2/io-7.0.2.jar!/" />
       <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.13/slf4j-api-1.7.13.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/itextpdf/layout/7.0.2/layout-7.0.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/itextpdf/kernel/7.0.2/kernel-7.0.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/com/itextpdf/io/7.0.2/io-7.0.2.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.13/slf4j-api-1.7.13.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

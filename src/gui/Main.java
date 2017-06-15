@@ -6,7 +6,11 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-
+/**
+ * Main Class only used to launch the JavaFX gui
+ * @author      Martin Anker <ankem1 @ students.bfh.ch>
+ * @version     0.9
+ */
 public class Main extends Application {
 
     @Override
@@ -22,13 +26,12 @@ public class Main extends Application {
         primaryStage.show();
 
 
-
-
     }
 
-
-
-
+    /**
+     * Launches the application
+     * @param args not used
+     */
     public static void main(String[] args) {
         launch(args);
     }

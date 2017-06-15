@@ -15,7 +15,9 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
- * Created by Martin on 02.06.2017.
+ * Controller for the Login window at program start
+ * @author      Martin Anker <ankem1 @ students.bfh.ch>
+ * @version     0.9
  */
 public class LoginController {
 
@@ -27,25 +29,44 @@ public class LoginController {
     //Skips Login if true, login requires level 1, login with ID: 16, pw: admin
     private final static boolean debug = false;
 
-
+    /**
+     * handles the pressing of the login button
+     * @throws IOException
+     */
     @FXML
     private void popupLogin_login() throws IOException {
         doLogin();
 
     }
 
+    /**
+     * Handles pressing of the enter key
+     * @param event key event
+     * @throws IOException
+     */
     @FXML
     private void handleKeypopupLogin_login(KeyEvent event) throws IOException {
         if (event.getCode() == KeyCode.ENTER)  {
             doLogin();
         }
     }
+
+    /**
+     * Handles pressing of the abbrechen button
+     */
    @FXML
    private void popupLogin_abbrechen() {
        Stage stage2 = (Stage) popupLogin_id.getScene().getWindow();
        stage2.close();
 
     }
+
+    /**
+     * Attempts to login with the entered credentials if both fields are not empty
+     * Calls Check credentials
+     * If successfull launches the main controller and UI window
+     * @throws IOException
+     */
     private void doLogin() throws IOException {
         popupLogin_credLabel.setText("");
 

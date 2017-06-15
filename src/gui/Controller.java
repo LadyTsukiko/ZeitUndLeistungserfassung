@@ -18,7 +18,14 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
-
+/**
+ * Main Controller class for the UI
+ * <p>
+ *     Handles the Main window, especially the table view and it's data
+ *     It also handles the popup for the Zeiterfassungs options
+ * @author      Martin Anker <ankem1 @ students.bfh.ch>
+ * @version     0.9
+ */
 public class Controller {
 
     @FXML private TableView mainTable;
@@ -33,8 +40,9 @@ public class Controller {
     private     dbAccess dba;
 
 
-
-
+    /**
+     * Constructor, sets up the Tableview and its handler
+     */
     public Controller(){
         dba = new dbAccess();
 
@@ -53,32 +61,13 @@ public class Controller {
         });
 
 
-
-
-
-  /*      mainTable.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observableValue, Object oldValue, Object newValue) {
-                System.out.println("Selected Value");
-
-                //Check whether item is selected and set value of selected item to Label
-                if(mainTable.getSelectionModel().getSelectedItem() != null)
-                {
-                    TableView.TableViewSelectionModel selectionModel = mainTable.getSelectionModel();
-                    ObservableList selectedCells = selectionModel.getSelectedCells();
-                    TablePosition tablePosition = (TablePosition) selectedCells.get(0);
-                    Object val = tablePosition.getTableColumn().getCellData(newValue);
-                    System.out.println("Selected Value" + val);
-                }
-            }
-        });
-
-
- */
-
-
     }
 
+    /**
+     * Handles the activation of the Neuer Eintrag button
+     * Starts a popup window to create a new entry
+     * @throws IOException
+     */
     @FXML
     private void handleCreateNew() throws IOException {
 
@@ -96,6 +85,9 @@ public class Controller {
         }
     }
 
+    /**
+     * Changes the display of the TableView to Mitarbeiter
+     */
     @FXML
     private void displayMitarbeiter() {
 
@@ -104,6 +96,9 @@ public class Controller {
 
     }
 
+    /**
+     * Changes the display of the TableView to Leistungen
+     */
     @FXML
     private void displayLeistungen() {
 
@@ -111,6 +106,9 @@ public class Controller {
         redo.setRedo(3);
     }
 
+    /**
+     * Changes the display of the TableView to Kunden
+     */
     @FXML
     private void displayKunden() {
 
@@ -119,6 +117,9 @@ public class Controller {
 
     }
 
+    /**
+     * Changes the display of the TableView to Projekte
+     */
     @FXML
     private void displayProjekte() {
 
@@ -126,6 +127,10 @@ public class Controller {
         redo.setRedo(4);
 
     }
+    /**
+     * Changes the display of the TableView to Zeiterfassungen
+     * Opens a popup window that allows the user to choose to display the Zeiterfassung by either Mitarbeiter or Projekt
+     */
     @FXML
     private void displayZeiterfassungen() throws IOException {
 
@@ -143,14 +148,18 @@ public class Controller {
         stage.show();
 
     }
-
+    /**
+     * Handles the pressing of the refresh button
+     */
     @FXML
     private void handleRefresh() {
         refresh();
     }
 
 
-
+    /**
+     * Handles the pressing of the OK button in the popup window
+     */
     @FXML
     private void handlePopupZeiterfassungOk() {
         if(popupZeiterfassung_mitarbeiter.isSelected()){
@@ -174,11 +183,18 @@ public class Controller {
         }
 
     }
+    /**
+     * Allows the passing of table view to the popup window
+     * javafx requires this to pass data
+     */
     private void passTableView(TableView tv, RefreshData redo){
         mainTable = tv;
         this.redo = redo;
     }
 
+    /**
+     * Handles the pressing of the Abbrechen button in the popup window
+     */
     @FXML
     private void handlePopupZeiterfassungAbbrechen() {
         Stage stage = (Stage) popupZeiterfassung_abbrechen.getScene().getWindow();
@@ -186,6 +202,10 @@ public class Controller {
 
     }
 
+    /**
+     * Handles the radio buttons in the popup window
+     * changes the entries in the combo box
+     */
     @FXML
     private void handlePopupZeiterfassungRadioButtons() {
         popupZeiterfassung_combobox.getItems().clear();
@@ -203,6 +223,10 @@ public class Controller {
 
     }
 
+    /**
+     * Fills in the Table view
+     * @param tc TableContents with the informations to fill it with
+     */
     private void fillTableView(TableContents tc){
 
         mainTable.getColumns().clear();
@@ -227,7 +251,12 @@ public class Controller {
 
     }
 
-
+    /**
+     * Handler that handles clicks on the TableView rows
+     * Opens the edit Entry popup window on a doubleclick
+     * @param me Mouse event
+     * @throws IOException
+     */
     @FXML
     private void handleClickedRow(MouseEvent me) throws IOException {
         if(me.getClickCount() == 2) {
@@ -250,6 +279,10 @@ public class Controller {
 
         }
     }
+
+    /**
+     * Refreshes the information in the TableView
+     */
     private void refresh() {
         switch (redo.getRedo()) {
             case 1:

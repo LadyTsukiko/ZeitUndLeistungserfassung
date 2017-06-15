@@ -8,7 +8,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-
+/**
+ * Controller for the new Entry popup Window
+ * @author      Martin Anker <ankem1 @ students.bfh.ch>
+ * @version     0.9
+ */
 public class EntryController {
 
 
@@ -33,12 +37,19 @@ public class EntryController {
     private TableContents tc;
     private TableContents popuptc;
 
+
     public EntryController() {
 
 
 
     }
 
+    /**
+     * Configures the window based on type of entry
+     * also allows the passing of data to a different javafx controller
+     * @param tc Current TableContent
+     * @param redo the informations of the last FillTableview
+     */
     public void initialize(TableContents tc, RefreshData redo){
         dba = new dbAccess();
 
@@ -103,7 +114,9 @@ public class EntryController {
     }
 
 
-
+    /**
+     * Handles the pressing of the Ok Button
+     */
     @FXML
     private void handlePopupNewEntryOk() {
         switch(redo.getRedo()) {
@@ -164,7 +177,9 @@ public class EntryController {
 
     }
 
-
+    /**
+     * Handles pressing of the Abbrechen button
+     */
     @FXML
     private void handlePopupNewEntryAbbrechen() {
         Stage stage = (Stage) popupNewEntry_abbrechen.getScene().getWindow();

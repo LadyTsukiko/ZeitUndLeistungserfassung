@@ -17,9 +17,13 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Iterator;
-
 import static java.time.LocalDate.parse;
 
+/**
+ * Controller for the edit Entry popup Window
+ * @author      Martin Anker <ankem1 @ students.bfh.ch>
+ * @version     0.9
+ */
 public class EditEntryController {
 
 
@@ -52,6 +56,12 @@ public class EditEntryController {
 
     }
 
+    /**
+     * Configures the window based on type of entry
+     * also allows the passing of data to a different javafx controller
+     * @param row the clicked row
+     * @param redo informations of the last FillTableview
+     */
     public void initialize(ObservableList row, RefreshData redo){
         dba = new dbAccess();
 
@@ -158,7 +168,9 @@ public class EditEntryController {
     }
 
 
-
+    /**
+     * Handles the pressing of the Update button
+     */
     @FXML
     private void handlePopupNewEntryUpdate() {
 
@@ -222,6 +234,10 @@ public class EditEntryController {
         stage.close();
 
     }
+
+    /**
+     * Handles the pressing of the delete button
+     */
     @FXML
     private void handlePopupNewEntryDelete() {
         switch(redo.getRedo()){
@@ -245,7 +261,9 @@ public class EditEntryController {
         stage.close();
     }
 
-
+    /**
+     * Handles pressing of the abbrechen button
+     */
         @FXML
     private void handlePopupNewEntryAbbrechen() {
         Stage stage = (Stage) popupNewEntry_abbrechen.getScene().getWindow();
@@ -253,7 +271,10 @@ public class EditEntryController {
 
     }
 
-
+    /**
+     * Handles pressing of the abschliessen button
+     * @throws IOException
+     */
     @FXML
     private void handlePopupNewEntryAbschliessen() throws IOException {
         popuptc = dba.getTotalTimeByProjekt(Integer.parseInt(popupEditEntry_idtext.getText()));
@@ -274,6 +295,12 @@ public class EditEntryController {
         stage2.close();
 
     }
+
+    /**
+     * Selects the Correct ID from all the combo box entries
+     * @param id the wanted ID
+     * @param cb the combo box
+     */
     private void autoSelectId(String id, ComboBox cb) {
 
         for (Object o : cb.getItems()) {
@@ -284,6 +311,12 @@ public class EditEntryController {
             }
         }
     }
+
+    /**
+     * Parses a string into a LocalDate
+     * @param dateString the String in yyyy-MM-dd pattern
+     * @return
+     */
     private static LocalDate LOCAL_DATE(String dateString){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return parse(dateString, formatter);

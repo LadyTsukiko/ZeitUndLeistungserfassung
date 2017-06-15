@@ -18,15 +18,26 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
- * Created by Martin on 02.06.2017.
+ * This class handles the finalization of a project and displays the costs for it
+ * <p>
+ *    Displays the costs in a textField as well as generating a PDF
+ * @author      Martin Anker <ankem1 @ students.bfh.ch>
+ * @version     0.9
  */
 public class AbrechnungsController {
 
     @FXML private TextArea popupAbrechnung_textarea;
 
+    /**
+     * Does the heavy lifting as well as allowing the program to pass data between controllers
+     * @param projekt_id ID of the to finishing project
+     * @param projekt_name name of the Project
+     * @param tc TableContents with the Project informations
+     * @throws IOException
+     */
     public void initialize(String projekt_id, String projekt_name, TableContents tc) throws IOException {
 
-        //Initilate pdf
+        //Initialize pdf
         PdfDocument pdfDocument = new PdfDocument(new PdfWriter("Abrechnug.pdf"));
         Document document = new Document(pdfDocument, PageSize.A4);
         //PdfFont font = PdfFontFactory.createFont(FontConstants.TIMES_ROMAN); //creates font
